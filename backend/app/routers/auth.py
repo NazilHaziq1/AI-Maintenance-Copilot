@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel
@@ -36,10 +36,10 @@ async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
     return {"message": "Account created successfully"}
 
 @router.post("/login")
-async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).where(User.email == data.email))
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.email == form_data.username))
     user = result.scalar_one_or_none()
-    if not user or not verify_password(data.password, user.hashed_password):
+    if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Wrong credentials")
     token = create_token(str(user.id))
     return {"access_token": token, "token_type": "bearer"}

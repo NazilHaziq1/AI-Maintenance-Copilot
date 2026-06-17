@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRY_HOURS: int = 24
-    OPENAI_API_KEY: str
+    GEMINI_API_KEY: str
 
     class Config:
         env_file = ".env"
