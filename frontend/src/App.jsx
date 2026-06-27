@@ -7,13 +7,23 @@ export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'))
   const [page, setPage] = useState('chat')
 
+  function handleLogin(t) {
+    setToken(t)
+    localStorage.setItem('token', t)
+  }
+
+  function handleLogout() {
+    setToken(null)
+    localStorage.removeItem('token')
+  }
+
   if (!token) {
-    return <LoginPage onLogin={setToken} />
+    return <LoginPage onLogin={handleLogin} />
   }
 
   if (page === 'documents') {
     return <DocumentsPage token={token} onGoToChat={() => setPage('chat')} />
   }
 
-  return <ChatPage token={token} onGoToDocuments={() => setPage('documents')} />
+  return <ChatPage token={token} onGoToDocuments={() => setPage('documents')} onLogout={handleLogout} />
 }
