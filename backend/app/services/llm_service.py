@@ -1,7 +1,7 @@
-from google import genai
+from groq import Groq
 from app.config import settings
 
-client = genai.Client(api_key=settings.GEMINI_API_KEY)
+client = Groq(api_key=settings.GROQ_API_KEY)
 
 def generate_answer(question: str, context_chunks: list[dict]) -> str:
     context = "\n\n".join([
@@ -18,8 +18,8 @@ Manual excerpts:
 
 Question: {question}"""
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt
+    response = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[{"role": "user", "content": prompt}]
     )
-    return response.text
+    return response.choices[0].message.content
