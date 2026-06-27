@@ -1,5 +1,7 @@
 # 🔧 AI Maintenance Copilot
 
+![Demo](docs/demo.png)
+
 An AI-powered assistant that lets industrial engineers query PDF maintenance manuals using natural language. Built with a full RAG (Retrieval-Augmented Generation) pipeline.
 
 ## Problem
