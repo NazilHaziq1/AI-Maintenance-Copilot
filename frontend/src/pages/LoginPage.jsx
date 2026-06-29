@@ -17,7 +17,7 @@ export default function LoginPage({ onLogin }) {
       if (isRegister) {
         await register(email, name, password)
         setIsRegister(false)
-        setError('Account created. Please login.')
+        setError('Account created. Please sign in.')
       } else {
         const token = await login(email, password)
         localStorage.setItem('token', token)
@@ -30,58 +30,59 @@ export default function LoginPage({ onLogin }) {
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '100px auto', padding: 24 }}>
-      <h1 style={{ marginBottom: 8 }}>🔧 Maintenance Copilot</h1>
-      <p style={{ color: '#666', marginBottom: 24 }}>
-        {isRegister ? 'Create an account' : 'Sign in to continue'}
-      </p>
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-title">⚙ Maintenance Copilot</div>
+        <div className="login-subtitle">
+          {isRegister ? 'Create an account to get started' : 'Sign in to continue'}
+        </div>
 
-      {error && <p style={{ color: 'red', marginBottom: 16 }}>{error}</p>}
+        <form onSubmit={handleSubmit}>
+          {isRegister && (
+            <div className="login-field">
+              <label className="login-label">Full name</label>
+              <input
+                className="login-input"
+                placeholder="Your name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+              />
+            </div>
+          )}
+          <div className="login-field">
+            <label className="login-label">Email</label>
+            <input
+              className="login-input"
+              placeholder="you@example.com"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="login-field">
+            <label className="login-label">Password</label>
+            <input
+              className="login-input"
+              placeholder="••••••••"
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+          </div>
+          <button className="login-btn" type="submit" disabled={loading}>
+            {loading ? 'Please wait...' : isRegister ? 'Create account' : 'Sign in'}
+          </button>
+        </form>
 
-      <form onSubmit={handleSubmit}>
-        {isRegister && (
-          <input
-            placeholder="Full name"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            style={inputStyle}
-          />
-        )}
-        <input
-          placeholder="Email"
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          style={inputStyle}
-        />
-        <input
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          style={inputStyle}
-        />
-        <button type="submit" disabled={loading} style={btnStyle}>
-          {loading ? 'Loading...' : isRegister ? 'Register' : 'Login'}
-        </button>
-      </form>
+        {error && <div className="login-error">{error}</div>}
 
-      <p style={{ marginTop: 16, color: '#666', cursor: 'pointer' }}
-        onClick={() => setIsRegister(!isRegister)}>
-        {isRegister ? 'Already have an account? Login' : "Don't have an account? Register"}
-      </p>
+        <div className="login-toggle">
+          {isRegister ? 'Already have an account? ' : "Don't have an account? "}
+          <button onClick={() => { setIsRegister(!isRegister); setError('') }}>
+            {isRegister ? 'Sign in' : 'Register'}
+          </button>
+        </div>
+      </div>
     </div>
   )
-}
-
-const inputStyle = {
-  display: 'block', width: '100%', padding: '10px 12px',
-  marginBottom: 12, borderRadius: 8, border: '1px solid #ddd',
-  fontSize: 15, boxSizing: 'border-box'
-}
-
-const btnStyle = {
-  width: '100%', padding: '12px', backgroundColor: '#1a1a1a',
-  color: 'white', border: 'none', borderRadius: 8,
-  fontSize: 15, cursor: 'pointer', marginTop: 4
 }
