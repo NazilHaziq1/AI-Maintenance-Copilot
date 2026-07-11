@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import LoginPage from './pages/LoginPage'
 import DocumentsPage from './pages/DocumentsPage'
 import ChatPage from './pages/ChatPage'
@@ -7,14 +7,24 @@ export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'))
   const [page, setPage] = useState('chat')
 
+  useEffect(() => {
+    function onForcedLogout() {
+      setToken(null)
+      setPage('chat')
+    }
+    window.addEventListener('auth:logout', onForcedLogout)
+    return () => window.removeEventListener('auth:logout', onForcedLogout)
+  }, [])
+
   function handleLogin(t) {
-    setToken(t)
     localStorage.setItem('token', t)
+    setToken(t)
   }
 
   function handleLogout() {
-    setToken(null)
     localStorage.removeItem('token')
+    setToken(null)
+    setPage('chat')
   }
 
   if (!token) {
@@ -22,8 +32,8 @@ export default function App() {
   }
 
   if (page === 'documents') {
-    return <DocumentsPage token={token} onGoToChat={() => setPage('chat')} />
+    return <DocumentsPage onGoToChat={() => setPage('chat')} />
   }
 
-  return <ChatPage token={token} onGoToDocuments={() => setPage('documents')} onLogout={handleLogout} />
+  return <ChatPage onGoToDocuments={() => setPage('documents')} onLogout={handleLogout} />
 }

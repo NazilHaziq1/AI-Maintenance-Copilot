@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks
+from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.db.session import get_db, AsyncSessionLocal
@@ -76,6 +76,17 @@ async def get_status(
     db: AsyncSession = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    result = await db.execute(select(Document).where(Document.id == uuid.UUID(document_id)))
+    try:
+        doc_uuid = uuid.UUID(document_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Document not found")
+    result = await db.execute(
+        select(Document).where(
+            Document.id == doc_uuid,
+            Document.uploaded_by == current_user.id,
+        )
+    )
     document = result.scalar_one_or_none()
+    if document is None:
+        raise HTTPException(status_code=404, detail="Document not found")
     return {"id": str(document.id), "status": document.status}

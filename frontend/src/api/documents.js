@@ -1,19 +1,13 @@
-import axios from 'axios'
+import client from './client'
 
-const API = 'http://127.0.0.1:8000/api/v1'
-
-export async function uploadDocument(file, token) {
+export async function uploadDocument(file) {
   const form = new FormData()
   form.append('file', file)
-  const res = await axios.post(`${API}/documents/upload`, form, {
-    headers: { Authorization: `Bearer ${token}` }
-  })
+  const res = await client.post('/documents/upload', form)
   return res.data
 }
 
-export async function listDocuments(token) {
-  const res = await axios.get(`${API}/documents`, {
-    headers: { Authorization: `Bearer ${token}` }
-  })
+export async function listDocuments() {
+  const res = await client.get('/documents')
   return res.data
 }

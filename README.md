@@ -72,6 +72,21 @@ GET  /api/v1/chat/sessions
 GET  /api/v1/chat/sessions/{id}/messages
 POST /api/v1/chat/sessions/{id}/messages
 
+## Deployment
+
+The frontend is deployed on Vercel: https://ai-maintenance-copilot.vercel.app
+
+The API base URL is configured via the `VITE_API_URL` environment variable
+(defaults to `http://127.0.0.1:8000` for local development). The backend uses
+local embeddings (torch + sentence-transformers) and PostgreSQL, so it must be
+hosted on a server platform (e.g. Render, Railway, Fly.io) rather than
+serverless. Once hosted, point the frontend at it:
+
+    vercel env add VITE_API_URL production   # e.g. https://your-backend.example.com
+    vercel deploy --prod
+
+CORS on the backend already allows `https://*.vercel.app` origins.
+
 ## Running Locally
 
 Prerequisites: Python 3.10+, Node.js 18+, PostgreSQL 17+ with pgvector
